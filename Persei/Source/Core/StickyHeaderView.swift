@@ -5,6 +5,9 @@ import UIKit
 private var ContentOffsetContext = 0
 private let DefaultContentHeight: CGFloat = 64
 
+let ScreenHeight = UIScreen.main.bounds.height
+let ScreenWidth = UIScreen.main.bounds.width
+
 open class StickyHeaderView: UIView {
     
     // MARK: - Init
@@ -27,7 +30,7 @@ open class StickyHeaderView: UIView {
     }
 
     public convenience init() {
-        self.init(frame: CGRect(x: 0, y: 0, width: 20, height: DefaultContentHeight))
+        self.init(frame: CGRect(x: 0, y: ScreenHeight - 20, width: 20, height: DefaultContentHeight))
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -54,9 +57,9 @@ open class StickyHeaderView: UIView {
         super.didMoveToSuperview()
         
         if let view = superview as? UIScrollView {
-            view.isScrollEnabled = false
+//            view.isScrollEnabled = false
             view.addObserver(self, forKeyPath: #keyPath(UIScrollView.contentOffset), options: [.initial, .new], context: &ContentOffsetContext)
-//            view.panGestureRecognizer.addTarget(self, action: #selector(StickyHeaderView.handlePan))
+            view.panGestureRecognizer.addTarget(self, action: #selector(StickyHeaderView.handlePan))
             view.sendSubviewToBack(self)
             
             if needRevealed && !insetsApplied {
@@ -163,7 +166,7 @@ open class StickyHeaderView: UIView {
             }, completion: { completed in
                 if adjust {
                     UIView.animate(withDuration: 0.2, animations: {
-                        self.scrollView.contentOffset.y = -self.scrollView.effectiveContentInset.top * 0.9
+                        self.scrollView.contentOffset.y = -self.scrollView.effectiveContentInset.top
                     })
                 }
             })
@@ -203,7 +206,7 @@ open class StickyHeaderView: UIView {
     // 给一个 112 的top 偏移
     private func addInsets() {
         assert(!insetsApplied, "Internal inconsistency")
-        applyInsets(UIEdgeInsets(top: contentHeight, left: 0, bottom: 0, right: 0))
+        applyInsets(UIEdgeInsets(top: -contentHeight, left: 0, bottom: 0, right: 0))
     }
 
     private func removeInsets() {
@@ -231,7 +234,7 @@ open class StickyHeaderView: UIView {
         var transform = CATransform3DIdentity
         transform.m34 = -1 / 500
         
-        let angle = (1 - progress) * (.pi / 2)
+        let angle = -(1 - progress) * (.pi / 2)
         transform = CATransform3DRotate(transform, angle, 1, 0, 0)
         
         contentContainer.layer.transform = transform
@@ -249,7 +252,7 @@ open class StickyHeaderView: UIView {
     
     @objc private func handlePan(_ recognizer: UIPanGestureRecognizer) {
         if recognizer.state == .ended {
-            let value = scrollView.normalizedContentOffset.y * (revealed ? 1 : -1)
+            let value = scrollView.normalizedContentOffset.y * (revealed ? -1 : 1)
             let triggeringValue = contentHeight * threshold
             let velocity = recognizer.velocity(in: scrollView).y
             
@@ -258,7 +261,7 @@ open class StickyHeaderView: UIView {
                 setRevealed(!revealed, animated: true, adjustContentOffset: adjust)
             } else if 0 < bounds.height && bounds.height < contentHeight {
                 UIView.animate(withDuration: 0.3, animations: {
-                    self.scrollView.contentOffset.y = -self.scrollView.effectiveContentInset.top * 0.9
+                    self.scrollView.contentOffset.y = -self.scrollView.effectiveContentInset.top
                 }) 
             }
         }
@@ -289,20 +292,21 @@ open class StickyHeaderView: UIView {
     }
 
     private func layoutToFit() {
-        let origin = scrollView.contentOffset.y + scrollView.effectiveContentInset.top - appliedInsets.top
+
+        let origin = ScreenHeight + scrollView.contentOffset.y - scrollView.effectiveContentInset.top + appliedInsets.top - 34
         frame.origin.y = origin
         
-        print("scrollView.contentOffset.y = \(scrollView.contentOffset.y) | origin = \(origin)")
+        print("scrollView.contentOffset.y = \(scrollView.contentOffset.y) \n origin = \(origin) \n scrollView.effectiveContentInset.top = \(scrollView.effectiveContentInset.top) \n appliedInsets.top = \(appliedInsets.top) \n safeAreaInsets.bottom = \(safeAreaInsets.bottom)")
         
         sizeToFit()
     }
     
     open override func sizeThatFits(_: CGSize) -> CGSize {
-        let revealedHeight: CGFloat = appliedInsets.top - scrollView.normalizedContentOffset.y
-        let collapsedHeight: CGFloat = scrollView.normalizedContentOffset.y * -1
+        let revealedHeight: CGFloat = -appliedInsets.top + scrollView.normalizedContentOffset.y
+        let collapsedHeight: CGFloat = scrollView.normalizedContentOffset.y
         let height: CGFloat = revealed ? revealedHeight : collapsedHeight
         let output = CGSize(width: scrollView.bounds.width, height: max(height, 0))
-        
+        print("output = \(output)")
         return output
     }
 }

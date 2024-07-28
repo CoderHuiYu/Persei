@@ -13,7 +13,7 @@ class TableViewController: UITableViewController {
         super.viewDidLoad()
         
         loadMenu()
-        
+        view.backgroundColor = .red
         title = model.description
         imageView.image = model.image
     }

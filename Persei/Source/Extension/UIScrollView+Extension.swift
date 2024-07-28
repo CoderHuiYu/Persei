@@ -5,7 +5,7 @@ import UIKit
 extension UIScrollView {
     
     /// Content offset that incorporates content offset to align default value to (0, 0) instead of a adjusted one.
-    var normalizedContentOffset: CGPoint {
+    var normalizedContentOffset: CGPoint { //加上了内边距
         get {
             let contentOffset = self.contentOffset
             let contentInset = self.effectiveContentInset
@@ -18,7 +18,7 @@ extension UIScrollView {
     /// Effective content inset used by a scroll view for both iOS 10 / 11. iOS 11 introduced new `contentInsetAdjustmentBehavior` that may
     /// include a new `UIView.safeAreaInsets` or not depending on the mode. `effectiveContentInsets` makes hides this details, so you may think of using
     /// `UIScrollView.contentInset` iOS 10-like behaviour.
-    var effectiveContentInset: UIEdgeInsets {
+    var effectiveContentInset: UIEdgeInsets { // 内边距
         get {
             if #available(iOS 11, *) {
                 return adjustedContentInset
@@ -30,6 +30,10 @@ extension UIScrollView {
         set {
             if #available(iOS 11.0, *), contentInsetAdjustmentBehavior != .never {
                 contentInset = newValue - safeAreaInsets
+                //猜测：安全区域调整：当设备从竖屏切换到横屏时，安全区域的大小和位置会发生变化。系统会自动调整 contentInset 以适应新的安全区域
+                // 强制不让左右变化
+                contentInset.left = 0
+                contentInset.right = 0
             } else {
                 contentInset = newValue
             }
