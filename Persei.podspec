@@ -18,4 +18,6 @@ Pod::Spec.new do |spec|
     spec.source_files = 'Persei/Source/**/*.swift'
     spec.module_name  = 'Persei'
     spec.requires_arc = true
+    
+    spec.dependency "RichCore" , "~> 0.2.0"
 end
