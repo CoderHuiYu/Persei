@@ -1,12 +1,10 @@
 // For License please refer to LICENSE file in the root of Persei project
 
 import UIKit
+import RichCore
 
 private var ContentOffsetContext = 0
 private let DefaultContentHeight: CGFloat = 64
-
-let ScreenHeight = UIScreen.main.bounds.height
-let ScreenWidth = UIScreen.main.bounds.width
 
 open class StickyHeaderView: UIView {
     
@@ -30,7 +28,7 @@ open class StickyHeaderView: UIView {
     }
 
     public convenience init() {
-        self.init(frame: CGRect(x: 0, y: ScreenHeight - 20, width: 20, height: DefaultContentHeight))
+        self.init(frame: CGRect(x: 0, y: UIDevice.screenHeight, width: 20, height: DefaultContentHeight))
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -97,7 +95,7 @@ open class StickyHeaderView: UIView {
     }
     
     /**
-    Affects on `contentView` sticking position during view stretching: 
+    Affects on `contentView` sticking position during view stretching:
     
     - Top: `contentView` sticked to the top position of the view
     - Center: `contentView` is aligned to the middle of the streched view
@@ -262,7 +260,7 @@ open class StickyHeaderView: UIView {
             } else if 0 < bounds.height && bounds.height < contentHeight {
                 UIView.animate(withDuration: 0.3, animations: {
                     self.scrollView.contentOffset.y = -self.scrollView.effectiveContentInset.top
-                }) 
+                })
             }
         }
     }
@@ -293,7 +291,7 @@ open class StickyHeaderView: UIView {
 
     private func layoutToFit() {
 
-        let origin = ScreenHeight + scrollView.contentOffset.y - scrollView.effectiveContentInset.top + appliedInsets.top - 34
+        let origin = UIDevice.screenHeight + scrollView.contentOffset.y - scrollView.effectiveContentInset.top + appliedInsets.top - UIDevice.safeBottomHeight
         frame.origin.y = origin
         
         print("scrollView.contentOffset.y = \(scrollView.contentOffset.y) \n origin = \(origin) \n scrollView.effectiveContentInset.top = \(scrollView.effectiveContentInset.top) \n appliedInsets.top = \(appliedInsets.top) \n safeAreaInsets.bottom = \(safeAreaInsets.bottom)")
