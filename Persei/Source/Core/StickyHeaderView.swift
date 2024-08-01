@@ -54,9 +54,9 @@ open class StickyHeaderView: UIView {
         super.didMoveToSuperview()
         
         if let view = superview as? UIScrollView {
-            view.isScrollEnabled = false
+//            view.isScrollEnabled = false
             view.addObserver(self, forKeyPath: #keyPath(UIScrollView.contentOffset), options: [.initial, .new], context: &ContentOffsetContext)
-//            view.panGestureRecognizer.addTarget(self, action: #selector(StickyHeaderView.handlePan))
+            view.panGestureRecognizer.addTarget(self, action: #selector(StickyHeaderView.handlePan))
             view.sendSubviewToBack(self)
             
             if needRevealed && !insetsApplied {
@@ -163,7 +163,7 @@ open class StickyHeaderView: UIView {
             }, completion: { completed in
                 if adjust {
                     UIView.animate(withDuration: 0.2, animations: {
-                        self.scrollView.contentOffset.y = -self.scrollView.effectiveContentInset.top * 0.9
+                        self.scrollView.contentOffset.y = -self.scrollView.effectiveContentInset.top
                     })
                 }
             })
@@ -258,7 +258,7 @@ open class StickyHeaderView: UIView {
                 setRevealed(!revealed, animated: true, adjustContentOffset: adjust)
             } else if 0 < bounds.height && bounds.height < contentHeight {
                 UIView.animate(withDuration: 0.3, animations: {
-                    self.scrollView.contentOffset.y = -self.scrollView.effectiveContentInset.top * 0.9
+                    self.scrollView.contentOffset.y = -self.scrollView.effectiveContentInset.top
                 }) 
             }
         }
@@ -290,7 +290,7 @@ open class StickyHeaderView: UIView {
 
     private func layoutToFit() {
         let origin = scrollView.contentOffset.y + scrollView.effectiveContentInset.top - appliedInsets.top
-        frame.origin.y = origin
+        frame.origin.y = origin // 0 --> 112 
         
         print("scrollView.contentOffset.y = \(scrollView.contentOffset.y) | origin = \(origin)")
         
@@ -303,6 +303,7 @@ open class StickyHeaderView: UIView {
         let height: CGFloat = revealed ? revealedHeight : collapsedHeight
         let output = CGSize(width: scrollView.bounds.width, height: max(height, 0))
         
+        // 0 ---> 112
         return output
     }
 }

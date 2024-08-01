@@ -21,7 +21,7 @@ extension UIScrollView {
     var effectiveContentInset: UIEdgeInsets {
         get {
             if #available(iOS 11, *) {
-                return adjustedContentInset
+                return adjustedContentInset  
             } else {
                 return contentInset
             }
