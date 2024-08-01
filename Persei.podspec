@@ -19,5 +19,5 @@ Pod::Spec.new do |spec|
     spec.module_name  = 'Persei'
     spec.requires_arc = true
     
-    spec.dependency "RichCore" , "~> 0.2.0"
+    spec.dependency "RichCore" , "~> 0.3.0"
 end
