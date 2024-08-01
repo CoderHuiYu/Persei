@@ -10,7 +10,7 @@ open class StickyHeaderView: UIView {
     
     // MARK: - Init
     
-    func commonInit() {
+    open func commonInit() {
         translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(backgroundImageView)
@@ -291,7 +291,7 @@ open class StickyHeaderView: UIView {
 
     private func layoutToFit() {
 
-        let origin = UIDevice.screenHeight + scrollView.contentOffset.y - scrollView.effectiveContentInset.top + appliedInsets.top - UIDevice.safeBottomHeight
+        let origin = UIDevice.screenHeight + scrollView.contentOffset.y + appliedInsets.top - UIDevice.safeBottomHeight
         frame.origin.y = origin
         
         print("scrollView.contentOffset.y = \(scrollView.contentOffset.y) \n origin = \(origin) \n scrollView.effectiveContentInset.top = \(scrollView.effectiveContentInset.top) \n appliedInsets.top = \(appliedInsets.top) \n safeAreaInsets.bottom = \(safeAreaInsets.bottom)")
@@ -308,3 +308,4 @@ open class StickyHeaderView: UIView {
         return output
     }
 }
+

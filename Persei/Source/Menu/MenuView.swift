@@ -8,7 +8,7 @@ private let DefaultContentHeight: CGFloat = 112.0
 open class MenuView: StickyHeaderView {
     
     // MARK: - Init
-    override func commonInit() {
+    override open func commonInit() {
         super.commonInit()
         
         if backgroundColor == nil {
